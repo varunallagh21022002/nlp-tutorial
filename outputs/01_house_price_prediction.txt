@@ -1,0 +1,6 @@
+Train: 600 | Test: 200 | Features: 5
+MAE: 5.9756
+RMSE: 7.4847
+R2: 0.9565
+baseline_MAE: 29.8094
+First five held-out predictions: [124.98477244 168.86948    122.60183702  83.96832199  89.14452053]

@@ -1,0 +1,15 @@
+Classes: {0: np.str_('malignant'), 1: np.str_('benign')}
+Train: 426 | Test: 143 | Features: 30
+              precision    recall  f1-score   support
+
+           0      0.945     0.981     0.963        53
+           1      0.989     0.967     0.978        90
+
+    accuracy                          0.972       143
+   macro avg      0.967     0.974     0.970       143
+weighted avg      0.973     0.972     0.972       143
+
+accuracy: 0.9720
+macro_f1: 0.9702
+baseline_accuracy: 0.6294
+First five held-out predictions: [1 0 1 1 0]

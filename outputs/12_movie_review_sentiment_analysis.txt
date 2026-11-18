@@ -1,0 +1,16 @@
+Example tokens: ['wonderful', 'story', 'excellent', 'acting', 'wonderful story', 'story excellent', 'excellent acting']
+Train: 60 | Test: 20 | Features: text
+              precision    recall  f1-score   support
+
+    negative      0.200     0.100     0.133        10
+    positive      0.400     0.600     0.480        10
+
+    accuracy                          0.350        20
+   macro avg      0.300     0.350     0.307        20
+weighted avg      0.300     0.350     0.307        20
+
+accuracy: 0.3500
+macro_f1: 0.3067
+baseline_accuracy: 0.5000
+First five held-out predictions: ['negative' 'positive' 'positive' 'positive' 'positive']
+New review predictions: ['positive' 'negative']

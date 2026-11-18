@@ -1,0 +1,8 @@
+Silhouette by k: {2: 0.424, 3: 0.506, 4: 0.4, 5: 0.322, 6: 0.233}
+Selected k: 3
+Cluster sizes: [142 156 152]
+Centres in original units:
+  age  annual_income  spending_score
+44.74          90.89           64.52
+55.11          50.24           26.17
+25.45          34.74           74.72

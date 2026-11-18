@@ -1,0 +1,21 @@
+Labels: 0 = not promoted; 1 = promoted
+Train: 675 | Test: 225 | Features: 4
+              precision    recall  f1-score   support
+
+           0      0.746     0.781     0.763       128
+           1      0.692     0.649     0.670        97
+
+    accuracy                          0.724       225
+   macro avg      0.719     0.715     0.717       225
+weighted avg      0.723     0.724     0.723       225
+
+accuracy: 0.7244
+macro_f1: 0.7168
+baseline_accuracy: 0.5689
+First five held-out predictions: [1 0 0 1 0]
+Feature importances:
+experience               0.104
+performance_rating       0.269
+training_score           0.518
+previous_achievements    0.109
+dtype: float64

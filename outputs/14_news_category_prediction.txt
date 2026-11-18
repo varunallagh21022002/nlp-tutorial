@@ -1,0 +1,19 @@
+Headlines: 100 | Categories: ['Business', 'Entertainment', 'Politics', 'Sports', 'Technology']
+Train: 75 | Test: 25 | Features: text
+               precision    recall  f1-score   support
+
+     Business      0.600     0.600     0.600         5
+Entertainment      0.500     0.800     0.615         5
+     Politics      0.833     1.000     0.909         5
+       Sports      0.833     1.000     0.909         5
+   Technology      0.000     0.000     0.000         5
+
+     accuracy                          0.680        25
+    macro avg      0.553     0.680     0.607        25
+ weighted avg      0.553     0.680     0.607        25
+
+accuracy: 0.6800
+macro_f1: 0.6067
+baseline_accuracy: 0.2000
+First five held-out predictions: ['Sports' 'Sports' 'Politics' 'Entertainment' 'Business']
+New headline predictions: ['Sports' 'Technology']

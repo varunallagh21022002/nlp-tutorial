@@ -1,0 +1,5 @@
+Train: 1347 | Test: 450 | Original features: 64
+components_for_95pct: 29.0000
+retained_variance: 0.9549
+two_dimensional_variance: 0.2842
+test_reconstruction_MSE: 0.0035

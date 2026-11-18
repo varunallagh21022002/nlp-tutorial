@@ -1,0 +1,16 @@
+Classes: {0: np.str_('setosa'), 1: np.str_('versicolor'), 2: np.str_('virginica')}
+Train: 112 | Test: 38 | Features: 4
+              precision    recall  f1-score   support
+
+           0      1.000     1.000     1.000        12
+           1      0.812     1.000     0.897        13
+           2      1.000     0.769     0.870        13
+
+    accuracy                          0.921        38
+   macro avg      0.938     0.923     0.922        38
+weighted avg      0.936     0.921     0.920        38
+
+accuracy: 0.9211
+macro_f1: 0.9220
+baseline_accuracy: 0.3158
+First five held-out predictions: [0 1 1 1 0]

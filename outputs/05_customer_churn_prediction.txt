@@ -1,0 +1,15 @@
+Labels: 0 = retained; 1 = churned
+Train: 900 | Test: 300 | Features: 5
+              precision    recall  f1-score   support
+
+           0      0.856     0.770     0.811       200
+           1      0.617     0.740     0.673       100
+
+    accuracy                          0.760       300
+   macro avg      0.736     0.755     0.742       300
+weighted avg      0.776     0.760     0.765       300
+
+accuracy: 0.7600
+macro_f1: 0.7416
+baseline_accuracy: 0.6667
+First five held-out predictions: [0 0 1 0 1]

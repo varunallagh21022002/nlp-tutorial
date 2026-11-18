@@ -1,0 +1,16 @@
+Messages: 80 | Classes: {'ham': 40, 'spam': 40}
+Train: 60 | Test: 20 | Features: text
+              precision    recall  f1-score   support
+
+         ham      1.000     1.000     1.000        10
+        spam      1.000     1.000     1.000        10
+
+    accuracy                          1.000        20
+   macro avg      1.000     1.000     1.000        20
+weighted avg      1.000     1.000     1.000        20
+
+accuracy: 1.0000
+macro_f1: 1.0000
+baseline_accuracy: 0.5000
+First five held-out predictions: ['ham' 'spam' 'ham' 'spam' 'spam']
+New SMS predictions: ['spam' 'ham']

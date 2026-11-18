@@ -1,0 +1,15 @@
+Labels: 0 = rejected; 1 = approved
+Train: 750 | Test: 250 | Features: 4
+              precision    recall  f1-score   support
+
+           0      0.769     0.813     0.791       123
+           1      0.808     0.764     0.785       127
+
+    accuracy                          0.788       250
+   macro avg      0.789     0.788     0.788       250
+weighted avg      0.789     0.788     0.788       250
+
+accuracy: 0.7880
+macro_f1: 0.7880
+baseline_accuracy: 0.5080
+First five held-out predictions: [0 0 0 0 0]

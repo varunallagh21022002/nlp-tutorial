@@ -1,0 +1,307 @@
+[
+  {
+    "number": 1,
+    "title": "House Price Prediction",
+    "model": "Linear Regression",
+    "aim": "Predict house prices using area, bedrooms, bathrooms, age and location features.",
+    "data": "800 generated houses. Area: square feet; age: years; price: INR lakh. Location has three categories.",
+    "theory": "Linear regression estimates coefficients by minimizing squared residuals. Categorical locations are one-hot encoded; numerical features are imputed and scaled using training data only.",
+    "code": "n = 800\nX = pd.DataFrame({'area': rng.uniform(500, 3500, n),\n    'bedrooms': rng.integers(1, 6, n),\n    'bathrooms': rng.integers(1, 5, n),\n    'age': rng.integers(0, 41, n),\n    'location': rng.choice(['central', 'suburb', 'outskirts'], n)})\npremium = X.location.map({'central': 30, 'suburb': 15, 'outskirts': 0})\ny = (0.035*X.area + 5*X.bedrooms + 4*X.bathrooms\n     - 0.5*X.age + premium + rng.normal(0, 7, n))\nmodel = make_pipeline(tabular_preprocessor(X), LinearRegression())\nmetrics = evaluate(model, X, y, '01_house_prices', classification=False)",
+    "limitation": "Generated prices follow a near-linear rule; the score does not establish performance on real property transactions.",
+    "filename": "01_house_price_prediction.ipynb",
+    "slug": "01_house_price_prediction",
+    "output": "Train: 600 | Test: 200 | Features: 5\nMAE: 5.9756\nRMSE: 7.4847\nR2: 0.9565\nbaseline_MAE: 29.8094\nFirst five held-out predictions: [124.98477244 168.86948    122.60183702  83.96832199  89.14452053]\n",
+    "metrics": {
+      "MAE": 5.975580566112729,
+      "RMSE": 7.4847482016269495,
+      "R2": 0.9564754330834824,
+      "baseline_MAE": 29.809429185103646
+    },
+    "conclusion": "Measured results: MAE = 5.9756; RMSE = 7.4847; R2 = 0.9565; baseline_MAE = 29.8094. Generated prices follow a near-linear rule; the score does not establish performance on real property transactions.",
+    "image": "outputs/01_house_prices.png"
+  },
+  {
+    "number": 2,
+    "title": "Loan Approval Prediction",
+    "model": "Logistic Regression",
+    "aim": "Predict approval from income, credit history, loan amount and employment information.",
+    "data": "1,000 generated applications. Income and loan amount are in INR lakh; credit history is a binary indicator.",
+    "theory": "Logistic regression maps a linear score to a probability using the sigmoid function. A stratified split preserves label proportions; scaling and employment encoding are fitted only on training rows.",
+    "code": "n = 1000\nX = pd.DataFrame({'income': rng.uniform(3, 30, n),\n    'credit_history': rng.binomial(1, 0.75, n),\n    'loan_amount': rng.uniform(2, 60, n),\n    'employment': rng.choice(['salaried', 'self_employed', 'unemployed'], n)})\njob = X.employment.map({'salaried': 0.8, 'self_employed': 0.2, 'unemployed': -1})\nscore = 0.13*X.income + 2*X.credit_history - 0.07*X.loan_amount + job - 1.5\ny = rng.binomial(1, 1/(1 + np.exp(-score)))\nprint('Labels: 0 = rejected; 1 = approved')\nmodel = make_pipeline(tabular_preprocessor(X),\n                      LogisticRegression(max_iter=2000, random_state=SEED))\nmetrics = evaluate(model, X, y, '02_loan_approval')",
+    "limitation": "The labels are simulated for teaching. Real lending requires representative data, policy checks and fairness evaluation.",
+    "filename": "02_loan_approval_prediction.ipynb",
+    "slug": "02_loan_approval_prediction",
+    "output": "Labels: 0 = rejected; 1 = approved\nTrain: 750 | Test: 250 | Features: 4\n              precision    recall  f1-score   support\n\n           0      0.769     0.813     0.791       123\n           1      0.808     0.764     0.785       127\n\n    accuracy                          0.788       250\n   macro avg      0.789     0.788     0.788       250\nweighted avg      0.789     0.788     0.788       250\n\naccuracy: 0.7880\nmacro_f1: 0.7880\nbaseline_accuracy: 0.5080\nFirst five held-out predictions: [0 0 0 0 0]\n",
+    "metrics": {
+      "accuracy": 0.788,
+      "macro_f1": 0.7879694676033349,
+      "baseline_accuracy": 0.508
+    },
+    "conclusion": "Measured results: accuracy = 0.7880; macro_f1 = 0.7880; baseline_accuracy = 0.5080. The labels are simulated for teaching. Real lending requires representative data, policy checks and fairness evaluation.",
+    "image": "outputs/02_loan_approval.png"
+  },
+  {
+    "number": 3,
+    "title": "Iris Flower Classification",
+    "model": "K-Nearest Neighbors (KNN)",
+    "aim": "Classify Setosa, Versicolor and Virginica from sepal and petal measurements.",
+    "data": "scikit-learn Iris benchmark: 150 flowers, four measurements in centimetres and three species.",
+    "theory": "KNN predicts the majority class of the five closest training observations. Standardization prevents a feature with a larger numerical scale from dominating Euclidean distance.",
+    "code": "dataset = load_iris(as_frame=True)\nX, y = dataset.data, dataset.target\nprint('Classes:', dict(enumerate(dataset.target_names)))\nmodel = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5))\nmetrics = evaluate(model, X, y, '03_iris_knn')",
+    "limitation": "The test split contains only 38 flowers. Results depend on the split and do not measure performance on every flower species.",
+    "filename": "03_iris_flower_classification.ipynb",
+    "slug": "03_iris_flower_classification",
+    "output": "Classes: {0: np.str_('setosa'), 1: np.str_('versicolor'), 2: np.str_('virginica')}\nTrain: 112 | Test: 38 | Features: 4\n              precision    recall  f1-score   support\n\n           0      1.000     1.000     1.000        12\n           1      0.812     1.000     0.897        13\n           2      1.000     0.769     0.870        13\n\n    accuracy                          0.921        38\n   macro avg      0.938     0.923     0.922        38\nweighted avg      0.936     0.921     0.920        38\n\naccuracy: 0.9211\nmacro_f1: 0.9220\nbaseline_accuracy: 0.3158\nFirst five held-out predictions: [0 1 1 1 0]\n",
+    "metrics": {
+      "accuracy": 0.9210526315789473,
+      "macro_f1": 0.9220389805097451,
+      "baseline_accuracy": 0.3157894736842105
+    },
+    "conclusion": "Measured results: accuracy = 0.9211; macro_f1 = 0.9220; baseline_accuracy = 0.3158. The test split contains only 38 flowers. Results depend on the split and do not measure performance on every flower species.",
+    "image": "outputs/03_iris_knn.png"
+  },
+  {
+    "number": 4,
+    "title": "Employee Promotion Prediction",
+    "model": "Decision Tree",
+    "aim": "Predict promotion using experience, performance rating, training score and prior achievements.",
+    "data": "900 generated employee records with simulated promotion labels.",
+    "theory": "A decision tree recursively partitions the feature space using impurity reduction. Limiting tree depth and minimum leaf size reduces overfitting.",
+    "code": "n = 900\nX = pd.DataFrame({'experience': rng.integers(0, 26, n),\n    'performance_rating': rng.integers(1, 6, n),\n    'training_score': rng.uniform(30, 100, n),\n    'previous_achievements': rng.integers(0, 5, n)})\nscore = (0.7*(X.performance_rating-3) + 0.06*(X.training_score-65)\n         + 0.35*X.previous_achievements + 0.05*X.experience - 1.8)\ny = rng.binomial(1, 1/(1 + np.exp(-score)))\nprint('Labels: 0 = not promoted; 1 = promoted')\nmodel = DecisionTreeClassifier(max_depth=5, min_samples_leaf=15,\n                               random_state=SEED)\nmetrics = evaluate(model, X, y, '04_employee_promotion')\nprint('Feature importances:')\nprint(pd.Series(model.feature_importances_, index=X.columns).round(3))",
+    "limitation": "Simulated labels encode a teaching rule; feature importance is not evidence that a factor causes promotion.",
+    "filename": "04_employee_promotion_prediction.ipynb",
+    "slug": "04_employee_promotion_prediction",
+    "output": "Labels: 0 = not promoted; 1 = promoted\nTrain: 675 | Test: 225 | Features: 4\n              precision    recall  f1-score   support\n\n           0      0.746     0.781     0.763       128\n           1      0.692     0.649     0.670        97\n\n    accuracy                          0.724       225\n   macro avg      0.719     0.715     0.717       225\nweighted avg      0.723     0.724     0.723       225\n\naccuracy: 0.7244\nmacro_f1: 0.7168\nbaseline_accuracy: 0.5689\nFirst five held-out predictions: [1 0 0 1 0]\nFeature importances:\nexperience               0.104\nperformance_rating       0.269\ntraining_score           0.518\nprevious_achievements    0.109\ndtype: float64\n",
+    "metrics": {
+      "accuracy": 0.7244444444444444,
+      "macro_f1": 0.7167857722917006,
+      "baseline_accuracy": 0.5688888888888889
+    },
+    "conclusion": "Measured results: accuracy = 0.7244; macro_f1 = 0.7168; baseline_accuracy = 0.5689. Simulated labels encode a teaching rule; feature importance is not evidence that a factor causes promotion.",
+    "image": "outputs/04_employee_promotion.png"
+  },
+  {
+    "number": 5,
+    "title": "Customer Churn Prediction",
+    "model": "Random Forest",
+    "aim": "Identify customers likely to leave a telecom service using usage, contracts, payment method and monthly charges.",
+    "data": "1,200 generated telecom customers; usage in GB, tenure in months, and monthly charges in currency units.",
+    "theory": "A random forest averages multiple trees trained on bootstrap samples with randomized feature selection. Class weighting accounts for unequal label frequencies.",
+    "code": "n = 1200\nX = pd.DataFrame({'usage_gb': rng.uniform(1, 100, n),\n    'tenure_months': rng.integers(1, 73, n),\n    'contract': rng.choice(['monthly', 'annual', 'two_year'], n),\n    'payment_method': rng.choice(['automatic', 'manual'], n),\n    'monthly_charges': rng.uniform(20, 120, n)})\nscore = (1.4*(X.contract=='monthly') + 0.5*(X.payment_method=='manual')\n         + 0.025*X.monthly_charges - 0.045*X.tenure_months\n         + 0.005*X.usage_gb - 2)\ny = rng.binomial(1, 1/(1 + np.exp(-score)))\nprint('Labels: 0 = retained; 1 = churned')\nmodel = make_pipeline(tabular_preprocessor(X), RandomForestClassifier(\n    n_estimators=150, max_depth=8, min_samples_leaf=5,\n    class_weight='balanced', random_state=SEED, n_jobs=-1))\nmetrics = evaluate(model, X, y, '05_customer_churn')",
+    "limitation": "The generated churn probabilities are noisy. Recall for the churn class matters more than accuracy alone for retention planning.",
+    "filename": "05_customer_churn_prediction.ipynb",
+    "slug": "05_customer_churn_prediction",
+    "output": "Labels: 0 = retained; 1 = churned\nTrain: 900 | Test: 300 | Features: 5\n              precision    recall  f1-score   support\n\n           0      0.856     0.770     0.811       200\n           1      0.617     0.740     0.673       100\n\n    accuracy                          0.760       300\n   macro avg      0.736     0.755     0.742       300\nweighted avg      0.776     0.760     0.765       300\n\naccuracy: 0.7600\nmacro_f1: 0.7416\nbaseline_accuracy: 0.6667\nFirst five held-out predictions: [0 0 1 0 1]\n",
+    "metrics": {
+      "accuracy": 0.76,
+      "macro_f1": 0.7416267942583732,
+      "baseline_accuracy": 0.6666666666666666
+    },
+    "conclusion": "Measured results: accuracy = 0.7600; macro_f1 = 0.7416; baseline_accuracy = 0.6667. The generated churn probabilities are noisy. Recall for the churn class matters more than accuracy alone for retention planning.",
+    "image": "outputs/05_customer_churn.png"
+  },
+  {
+    "number": 6,
+    "title": "Breast Cancer Classification",
+    "model": "Support Vector Machine (SVM)",
+    "aim": "Classify diagnostic feature vectors as malignant or benign.",
+    "data": "scikit-learn Wisconsin Diagnostic Breast Cancer benchmark: 569 samples and 30 numerical features.",
+    "theory": "An RBF-kernel SVM learns a nonlinear decision boundary with a maximum-margin objective. Standardization is fitted on training data to avoid test-set leakage.",
+    "code": "dataset = load_breast_cancer(as_frame=True)\nX, y = dataset.data, dataset.target\nprint('Classes:', dict(enumerate(dataset.target_names)))\nmodel = make_pipeline(StandardScaler(), SVC(C=1.0, kernel='rbf',\n    gamma='scale', class_weight='balanced', random_state=SEED))\nmetrics = evaluate(model, X, y, '06_breast_cancer')",
+    "limitation": "This is a benchmark exercise, not a validated clinical diagnostic system. Review malignant-class recall as well as accuracy.",
+    "filename": "06_breast_cancer_classification.ipynb",
+    "slug": "06_breast_cancer_classification",
+    "output": "Classes: {0: np.str_('malignant'), 1: np.str_('benign')}\nTrain: 426 | Test: 143 | Features: 30\n              precision    recall  f1-score   support\n\n           0      0.945     0.981     0.963        53\n           1      0.989     0.967     0.978        90\n\n    accuracy                          0.972       143\n   macro avg      0.967     0.974     0.970       143\nweighted avg      0.973     0.972     0.972       143\n\naccuracy: 0.9720\nmacro_f1: 0.9702\nbaseline_accuracy: 0.6294\nFirst five held-out predictions: [1 0 1 1 0]\n",
+    "metrics": {
+      "accuracy": 0.972027972027972,
+      "macro_f1": 0.9702455264253016,
+      "baseline_accuracy": 0.6293706293706294
+    },
+    "conclusion": "Measured results: accuracy = 0.9720; macro_f1 = 0.9702; baseline_accuracy = 0.6294. This is a benchmark exercise, not a validated clinical diagnostic system. Review malignant-class recall as well as accuracy.",
+    "image": "outputs/06_breast_cancer.png"
+  },
+  {
+    "number": 7,
+    "title": "Spam SMS Detection",
+    "model": "TF-IDF + Naive Bayes",
+    "aim": "Clean SMS text, extract TF-IDF features and classify spam versus legitimate messages.",
+    "data": "80 original, manually authored teaching messages: 40 spam and 40 ham. No downloaded SMS corpus or personal messages are used.",
+    "theory": "Text is lowercased, URLs and numbers are normalized, and punctuation is removed. TF-IDF downweights frequent terms; Multinomial Naive Bayes uses class-conditional token counts with additive smoothing.",
+    "code": "df = pd.read_csv(DATA / 'sms.csv')\nX, y = df.text.map(clean_text), df.label\nassert not X.duplicated().any()\nprint('Messages:', len(df), '| Classes:', y.value_counts().to_dict())\nmodel = make_pipeline(TfidfVectorizer(ngram_range=(1, 2)), MultinomialNB())\nmetrics = evaluate(model, X, y, '07_sms_spam')\nexamples = ['Claim your free cash prize now', 'Meet me at the library tomorrow']\nprint('New SMS predictions:', model.predict([clean_text(s) for s in examples]))",
+    "limitation": "The small authored corpus illustrates the pipeline only. Its test metrics are not a real-world spam benchmark.",
+    "filename": "07_spam_sms_detection.ipynb",
+    "slug": "07_spam_sms_detection",
+    "output": "Messages: 80 | Classes: {'ham': 40, 'spam': 40}\nTrain: 60 | Test: 20 | Features: text\n              precision    recall  f1-score   support\n\n         ham      1.000     1.000     1.000        10\n        spam      1.000     1.000     1.000        10\n\n    accuracy                          1.000        20\n   macro avg      1.000     1.000     1.000        20\nweighted avg      1.000     1.000     1.000        20\n\naccuracy: 1.0000\nmacro_f1: 1.0000\nbaseline_accuracy: 0.5000\nFirst five held-out predictions: ['ham' 'spam' 'ham' 'spam' 'spam']\nNew SMS predictions: ['spam' 'ham']\n",
+    "metrics": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "baseline_accuracy": 0.5
+    },
+    "conclusion": "Measured results: accuracy = 1.0000; macro_f1 = 1.0000; baseline_accuracy = 0.5000. The small authored corpus illustrates the pipeline only. Its test metrics are not a real-world spam benchmark.",
+    "image": "outputs/07_sms_spam.png"
+  },
+  {
+    "number": 8,
+    "title": "Customer Segmentation",
+    "model": "K-Means Clustering",
+    "aim": "Group customers by age, annual income and spending score without predefined labels.",
+    "data": "450 generated customers from three overlapping profiles. Income is in thousands of currency units; spending score ranges from 1 to 100.",
+    "theory": "K-Means minimizes within-cluster squared distance. Features are standardized, candidate values of k are compared by silhouette score, and centres are converted back to original units for interpretation.",
+    "code": "centres = [[25, 35, 75], [45, 90, 65], [55, 50, 25]]\nparts = [rng.normal(c, [8, 15, 14], size=(150, 3)) for c in centres]\nX = pd.DataFrame(np.vstack(parts), columns=['age', 'annual_income', 'spending_score'])\nX['age'] = X.age.clip(18, 80)\nX['annual_income'] = X.annual_income.clip(10, 160)\nX['spending_score'] = X.spending_score.clip(1, 100)\nscaler = StandardScaler()\nZ = scaler.fit_transform(X)\ncandidates = {}\nfor k in range(2, 7):\n    km = KMeans(n_clusters=k, n_init=10, random_state=SEED).fit(Z)\n    candidates[k] = (silhouette_score(Z, km.labels_), km)\nbest_k = max(candidates, key=lambda k: candidates[k][0])\nscore, model = candidates[best_k]\nprint('Silhouette by k:', {k: round(v[0], 3) for k, v in candidates.items()})\nprint('Selected k:', best_k)\nprint('Cluster sizes:', np.bincount(model.labels_))\nprint('Centres in original units:')\nprint(pd.DataFrame(scaler.inverse_transform(model.cluster_centers_),\n                   columns=X.columns).round(2).to_string(index=False))\nplt.scatter(X.annual_income, X.spending_score, c=model.labels_, cmap='viridis', s=18)\nplt.xlabel('Annual income (thousands)'); plt.ylabel('Spending score')\nplt.title('Customer segments; age also used for clustering')\nplot_save('08_customer_segments')\nmetrics = {'selected_k': best_k, 'silhouette': score}",
+    "limitation": "Silhouette is an internal measure computed on the same data used for clustering. Cluster numbers are arbitrary, not externally verified customer categories.",
+    "filename": "08_customer_segmentation.ipynb",
+    "slug": "08_customer_segmentation",
+    "output": "Silhouette by k: {2: 0.424, 3: 0.506, 4: 0.4, 5: 0.322, 6: 0.233}\nSelected k: 3\nCluster sizes: [142 156 152]\nCentres in original units:\n  age  annual_income  spending_score\n44.74          90.89           64.52\n55.11          50.24           26.17\n25.45          34.74           74.72\n",
+    "metrics": {
+      "selected_k": 3.0,
+      "silhouette": 0.5062759332971802
+    },
+    "conclusion": "Measured results: selected_k = 3.0000; silhouette = 0.5063. Silhouette is an internal measure computed on the same data used for clustering. Cluster numbers are arbitrary, not externally verified customer categories.",
+    "image": "outputs/08_customer_segments.png"
+  },
+  {
+    "number": 9,
+    "title": "Used Car Price Prediction",
+    "model": "Random Forest Regressor",
+    "aim": "Predict used-car prices from age, kilometres driven, engine capacity, fuel type and transmission.",
+    "data": "1,000 generated cars. Price: INR lakh; distance: kilometres; engine: cubic centimetres.",
+    "theory": "Random forest regression averages decision-tree predictions and can represent nonlinear relationships. Fuel and transmission are encoded inside the training pipeline.",
+    "code": "n = 1000\nX = pd.DataFrame({'age': rng.uniform(0, 15, n),\n    'kilometers_driven': rng.uniform(1000, 200000, n),\n    'engine_capacity': rng.choice([1000, 1200, 1500, 2000, 2500], n),\n    'fuel_type': rng.choice(['petrol', 'diesel', 'electric'], n),\n    'transmission': rng.choice(['manual', 'automatic'], n)})\ny = (2 + 0.006*X.engine_capacity*np.exp(-0.08*X.age)\n     - 0.000012*X.kilometers_driven + 1.5*(X.transmission=='automatic')\n     + 2*(X.fuel_type=='electric') + rng.normal(0, 0.6, n)).clip(0.5)\nmodel = make_pipeline(tabular_preprocessor(X), RandomForestRegressor(\n    n_estimators=150, min_samples_leaf=2, random_state=SEED, n_jobs=-1))\nmetrics = evaluate(model, X, y, '09_used_car_prices', classification=False)",
+    "limitation": "The generated price rule omits brand, condition, accident history and market changes; benchmark accuracy cannot establish resale valuation accuracy.",
+    "filename": "09_used_car_price_prediction.ipynb",
+    "slug": "09_used_car_price_prediction",
+    "output": "Train: 750 | Test: 250 | Features: 5\nMAE: 0.6152\nRMSE: 0.7668\nR2: 0.9389\nbaseline_MAE: 2.5203\nFirst five held-out predictions: [ 9.44815936  8.4729344  10.10763159 12.76565557  4.00383511]\n",
+    "metrics": {
+      "MAE": 0.6151616070849407,
+      "RMSE": 0.7668150707706346,
+      "R2": 0.938874177589367,
+      "baseline_MAE": 2.5202717965949932
+    },
+    "conclusion": "Measured results: MAE = 0.6152; RMSE = 0.7668; R2 = 0.9389; baseline_MAE = 2.5203. The generated price rule omits brand, condition, accident history and market changes; benchmark accuracy cannot establish resale valuation accuracy.",
+    "image": "outputs/09_used_car_prices.png"
+  },
+  {
+    "number": 10,
+    "title": "Credit Card Fraud Detection",
+    "model": "Isolation Forest",
+    "aim": "Detect unusual transactions from numerical features using an unsupervised anomaly detector.",
+    "data": "2,000 generated transactions: 1,940 normal and 60 anomalies. Labels are used only for stratification and final evaluation, not model fitting.",
+    "theory": "Isolation Forest isolates observations using random partitions; anomalies tend to require shorter paths. The contamination rate is fixed in advance at 3 percent, not tuned on held-out labels.",
+    "code": "normal = rng.normal(0, 1, size=(1940, 5))\nanomalies = rng.normal(2.8, 1.5, size=(60, 5))\nX = pd.DataFrame(np.vstack([normal, anomalies]), columns=[\n    'log_amount_z', 'distance_z', 'velocity_z', 'hour_risk_z', 'device_risk_z'])\ny = np.r_[np.zeros(len(normal), dtype=int), np.ones(len(anomalies), dtype=int)]\nXtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25,\n                                    stratify=y, random_state=SEED)\nmodel = IsolationForest(n_estimators=200, contamination=0.03,\n                        random_state=SEED, n_jobs=-1)\nmodel.fit(Xtr)  # No labels supplied to the unsupervised estimator.\npred = (model.predict(Xte) == -1).astype(int)\nrisk = -model.decision_function(Xte)\nprint(f'Train: {len(Xtr)} | Test: {len(Xte)} | Test anomalies: {sum(yte)}')\nprint('Labels: 0 = normal; 1 = anomaly')\nprint(classification_report(yte, pred, digits=3, zero_division=0))\nmetrics = {'average_precision': average_precision_score(yte, risk),\n           'anomaly_f1': f1_score(yte, pred),\n           'prevalence_baseline_AP': float(yte.mean())}\nfor key, value in metrics.items(): print(f'{key}: {value:.4f}')\nConfusionMatrixDisplay.from_predictions(yte, pred, cmap='Blues', colorbar=False)\nplt.title('Held-out anomaly detection')\nplot_save('10_fraud_detection')",
+    "limitation": "An anomaly is not proof of fraud. The generated anomalies are deliberately separated, making this easier than most real transaction datasets.",
+    "filename": "10_credit_card_fraud_detection.ipynb",
+    "slug": "10_credit_card_fraud_detection",
+    "output": "Train: 1500 | Test: 500 | Test anomalies: 15\nLabels: 0 = normal; 1 = anomaly\n              precision    recall  f1-score   support\n\n           0      0.998     0.994     0.996       485\n           1      0.824     0.933     0.875        15\n\n    accuracy                          0.992       500\n   macro avg      0.911     0.964     0.935       500\nweighted avg      0.993     0.992     0.992       500\n\naverage_precision: 0.9585\nanomaly_f1: 0.8750\nprevalence_baseline_AP: 0.0300\n",
+    "metrics": {
+      "average_precision": 0.9584733893557422,
+      "anomaly_f1": 0.875,
+      "prevalence_baseline_AP": 0.03
+    },
+    "conclusion": "Measured results: average_precision = 0.9585; anomaly_f1 = 0.8750; prevalence_baseline_AP = 0.0300. An anomaly is not proof of fraud. The generated anomalies are deliberately separated, making this easier than most real transaction datasets.",
+    "image": "outputs/10_fraud_detection.png"
+  },
+  {
+    "number": 11,
+    "title": "Student Performance Prediction",
+    "model": "Gradient Boosting Regressor",
+    "aim": "Predict a final academic score from attendance, study hours, assignments, previous scores and participation.",
+    "data": "900 generated students. Marks and attendance are percentages; study hours are weekly. The regression option allowed by the assignment is used.",
+    "theory": "Gradient boosting fits successive shallow trees to reduce the residual error of an additive model. Learning rate and tree complexity control model capacity.",
+    "code": "n = 900\nX = pd.DataFrame({'attendance': rng.uniform(40, 100, n),\n    'study_hours': rng.uniform(0, 30, n),\n    'assignment_marks': rng.uniform(20, 100, n),\n    'previous_scores': rng.uniform(20, 100, n),\n    'participation': rng.integers(0, 11, n)})\ny = (0.2*X.attendance + 0.6*X.study_hours + 0.25*X.assignment_marks\n     + 0.3*X.previous_scores + 0.8*X.participation\n     + rng.normal(0, 5, n)).clip(0, 100)\nmodel = GradientBoostingRegressor(n_estimators=150, learning_rate=0.05,\n                                  max_depth=2, random_state=SEED)\nmetrics = evaluate(model, X, y, '11_student_performance', classification=False)",
+    "limitation": "Predictive associations in synthetic records are not causal explanations of student achievement.",
+    "filename": "11_student_performance_prediction.ipynb",
+    "slug": "11_student_performance_prediction",
+    "output": "Train: 675 | Test: 225 | Features: 5\nMAE: 4.5706\nRMSE: 5.7228\nR2: 0.8144\nbaseline_MAE: 10.8046\nFirst five held-out predictions: [38.38403433 46.88331791 54.08655882 59.10153923 66.42058059]\n",
+    "metrics": {
+      "MAE": 4.570647572995882,
+      "RMSE": 5.722776066074607,
+      "R2": 0.8143619257015667,
+      "baseline_MAE": 10.804644730628072
+    },
+    "conclusion": "Measured results: MAE = 4.5706; RMSE = 5.7228; R2 = 0.8144; baseline_MAE = 10.8046. Predictive associations in synthetic records are not causal explanations of student achievement.",
+    "image": "outputs/11_student_performance.png"
+  },
+  {
+    "number": 12,
+    "title": "Movie Review Sentiment Analysis",
+    "model": "CountVectorizer + SVM",
+    "aim": "Tokenize reviews, remove stop words, vectorize counts and classify positive or negative sentiment.",
+    "data": "80 original short teaching reviews, balanced between positive and negative. The corpus is intentionally small and stored locally.",
+    "theory": "CountVectorizer performs word tokenization and stop-word removal. Negation words are retained; unigrams and bigrams feed a linear SVM so phrases such as \"not good\" remain distinguishable.",
+    "code": "df = pd.read_csv(DATA / 'reviews.csv')\nX, y = df.text.map(clean_text), df.label\nassert not X.duplicated().any()\nstop_words = sorted(set(ENGLISH_STOP_WORDS) - {'not', 'no', 'nor', 'never'})\nvectorizer = CountVectorizer(stop_words=stop_words, ngram_range=(1, 2))\nprint('Example tokens:', vectorizer.build_analyzer()(clean_text(X.iloc[0])))\nmodel = make_pipeline(vectorizer, LinearSVC(C=1.0, random_state=SEED))\nmetrics = evaluate(model, X, y, '12_movie_sentiment')\nexamples = ['A wonderful story and excellent acting',\n            'A boring story with terrible acting']\nprint('New review predictions:', model.predict([clean_text(s) for s in examples]))",
+    "limitation": "Accuracy is below the 0.50 majority baseline on this split. The small corpus is insufficient for reliable sentiment learning; use a larger independent review dataset before drawing performance conclusions.",
+    "filename": "12_movie_review_sentiment_analysis.ipynb",
+    "slug": "12_movie_review_sentiment_analysis",
+    "output": "Example tokens: ['wonderful', 'story', 'excellent', 'acting', 'wonderful story', 'story excellent', 'excellent acting']\nTrain: 60 | Test: 20 | Features: text\n              precision    recall  f1-score   support\n\n    negative      0.200     0.100     0.133        10\n    positive      0.400     0.600     0.480        10\n\n    accuracy                          0.350        20\n   macro avg      0.300     0.350     0.307        20\nweighted avg      0.300     0.350     0.307        20\n\naccuracy: 0.3500\nmacro_f1: 0.3067\nbaseline_accuracy: 0.5000\nFirst five held-out predictions: ['negative' 'positive' 'positive' 'positive' 'positive']\nNew review predictions: ['positive' 'negative']\n",
+    "metrics": {
+      "accuracy": 0.35,
+      "macro_f1": 0.30666666666666664,
+      "baseline_accuracy": 0.5
+    },
+    "conclusion": "Measured results: accuracy = 0.3500; macro_f1 = 0.3067; baseline_accuracy = 0.5000. Accuracy is below the 0.50 majority baseline on this split. The small corpus is insufficient for reliable sentiment learning; use a larger independent review dataset before drawing performance conclusions.",
+    "image": "outputs/12_movie_sentiment.png"
+  },
+  {
+    "number": 13,
+    "title": "Dimensionality Reduction of Handwritten Digits",
+    "model": "Principal Component Analysis (PCA)",
+    "aim": "Reduce handwritten-digit image features while retaining information and visualize samples in two dimensions.",
+    "data": "scikit-learn Digits benchmark: 1,797 images, each 8 x 8 pixels with intensities from 0 to 16.",
+    "theory": "PCA finds orthogonal directions of maximum variance. A 95-percent-variance representation is compared with a separate two-component visualization. PCA is fitted only on training images; labels are used only to colour the held-out plot.",
+    "code": "dataset = load_digits()\nX, y = dataset.data / 16.0, dataset.target\nXtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25,\n                                    stratify=y, random_state=SEED)\npca95 = PCA(n_components=0.95, svd_solver='full').fit(Xtr)\ncompressed = pca95.transform(Xte)\nreconstructed = pca95.inverse_transform(compressed)\npca2 = PCA(n_components=2, svd_solver='full').fit(Xtr)\npoints = pca2.transform(Xte)\nmetrics = {'components_for_95pct': pca95.n_components_,\n    'retained_variance': pca95.explained_variance_ratio_.sum(),\n    'two_dimensional_variance': pca2.explained_variance_ratio_.sum(),\n    'test_reconstruction_MSE': mean_squared_error(Xte, reconstructed)}\nprint(f'Train: {len(Xtr)} | Test: {len(Xte)} | Original features: 64')\nfor key, value in metrics.items(): print(f'{key}: {value:.4f}')\nplt.scatter(points[:, 0], points[:, 1], c=yte, cmap='tab10', s=15, alpha=0.8)\nplt.colorbar(ticks=range(10), label='True digit (visualization only)')\nplt.xlabel('Principal component 1'); plt.ylabel('Principal component 2')\nplt.title('Held-out digits projected into two dimensions')\nplot_save('13_digits_pca')",
+    "limitation": "Two principal components retain much less information than the 95-percent representation; class overlap in two dimensions is expected.",
+    "filename": "13_dimensionality_reduction_of_handwritten_digits.ipynb",
+    "slug": "13_dimensionality_reduction_of_handwritten_digits",
+    "output": "Train: 1347 | Test: 450 | Original features: 64\ncomponents_for_95pct: 29.0000\nretained_variance: 0.9549\ntwo_dimensional_variance: 0.2842\ntest_reconstruction_MSE: 0.0035\n",
+    "metrics": {
+      "components_for_95pct": 29.0,
+      "retained_variance": 0.9549440145852839,
+      "two_dimensional_variance": 0.2842435397781509,
+      "test_reconstruction_MSE": 0.003505397696036113
+    },
+    "conclusion": "Measured results: components_for_95pct = 29.0000; retained_variance = 0.9549; two_dimensional_variance = 0.2842; test_reconstruction_MSE = 0.0035. Two principal components retain much less information than the 95-percent representation; class overlap in two dimensions is expected.",
+    "image": "outputs/13_digits_pca.png"
+  },
+  {
+    "number": 14,
+    "title": "News Category Prediction",
+    "model": "TF-IDF + Multinomial Logistic Regression",
+    "aim": "Classify headlines into Sports, Business, Technology, Politics and Entertainment.",
+    "data": "100 original teaching headlines: 20 per category, with no downloaded news text. Each headline is unique.",
+    "theory": "TF-IDF represents unigram and bigram evidence. Logistic regression with the lbfgs solver optimizes multinomial softmax loss for the five-class task.",
+    "code": "df = pd.read_csv(DATA / 'news.csv')\nX, y = df.text.map(clean_text), df.label\nassert not X.duplicated().any()\nprint('Headlines:', len(df), '| Categories:', sorted(y.unique()))\nmodel = make_pipeline(TfidfVectorizer(ngram_range=(1, 2)),\n    LogisticRegression(solver='lbfgs', max_iter=2000, random_state=SEED))\nmetrics = evaluate(model, X, y, '14_news_categories')\nexamples = ['Team wins the football tournament final',\n            'Software company releases a new artificial intelligence chip']\nprint('New headline predictions:', model.predict([clean_text(s) for s in examples]))",
+    "limitation": "Topic keywords are comparatively clear in this teaching corpus; production news can span multiple categories or change vocabulary.",
+    "filename": "14_news_category_prediction.ipynb",
+    "slug": "14_news_category_prediction",
+    "output": "Headlines: 100 | Categories: ['Business', 'Entertainment', 'Politics', 'Sports', 'Technology']\nTrain: 75 | Test: 25 | Features: text\n               precision    recall  f1-score   support\n\n     Business      0.600     0.600     0.600         5\nEntertainment      0.500     0.800     0.615         5\n     Politics      0.833     1.000     0.909         5\n       Sports      0.833     1.000     0.909         5\n   Technology      0.000     0.000     0.000         5\n\n     accuracy                          0.680        25\n    macro avg      0.553     0.680     0.607        25\n weighted avg      0.553     0.680     0.607        25\n\naccuracy: 0.6800\nmacro_f1: 0.6067\nbaseline_accuracy: 0.2000\nFirst five held-out predictions: ['Sports' 'Sports' 'Politics' 'Entertainment' 'Business']\nNew headline predictions: ['Sports' 'Technology']\n",
+    "metrics": {
+      "accuracy": 0.68,
+      "macro_f1": 0.6067132867132867,
+      "baseline_accuracy": 0.2
+    },
+    "conclusion": "Measured results: accuracy = 0.6800; macro_f1 = 0.6067; baseline_accuracy = 0.2000. Topic keywords are comparatively clear in this teaching corpus; production news can span multiple categories or change vocabulary.",
+    "image": "outputs/14_news_categories.png"
+  },
+  {
+    "number": 15,
+    "title": "Sales Prediction",
+    "model": "AdaBoost Regressor",
+    "aim": "Predict future sales from advertising, previous sales, product price, discounts and seasonal features.",
+    "data": "600 generated daily observations; sales are units, advertising and price are currency units, discount is a fraction. The final 150 days form the test period.",
+    "theory": "AdaBoost combines weak regression trees while increasing attention to poorly predicted observations. Evaluation uses a chronological split; previous-day sales are observable for rolling one-day-ahead prediction.",
+    "code": "n = 601\nadvertising = rng.uniform(10, 100, n)\nprice = rng.uniform(15, 40, n)\ndiscount = rng.uniform(0, 0.3, n)\nseason = np.sin(2*np.pi*np.arange(n)/30)\nsales = np.zeros(n); sales[0] = 100\nfor t in range(1, n):\n    sales[t] = max(0, 30 + 0.45*sales[t-1] + 1.2*advertising[t]\n        - 1.3*price[t] + 80*discount[t] + 15*season[t]\n        + rng.normal(0, 8))\nX = pd.DataFrame({'advertising': advertising[1:],\n    'previous_sales': sales[:-1], 'price': price[1:],\n    'discount': discount[1:], 'seasonal_signal': season[1:]})\ny = sales[1:]\nmodel = AdaBoostRegressor(n_estimators=150, learning_rate=0.05,\n                          loss='square', random_state=SEED)\nmetrics = evaluate(model, X, y, '15_sales_prediction',\n                   classification=False, chronological=True)\ncut = int(len(y)*0.75)\nmetrics['persistence_MAE'] = mean_absolute_error(y[cut:], X.previous_sales.iloc[cut:])\nprint(f'Previous-day persistence MAE: {metrics[\"persistence_MAE\"]:.4f}')",
+    "limitation": "This is rolling one-day-ahead forecasting with known advertising and price. Multi-day forecasting would need predicted lags and a separate evaluation.",
+    "filename": "15_sales_prediction.ipynb",
+    "slug": "15_sales_prediction",
+    "output": "Train: 450 | Test: 150 | Features: 5\nMAE: 15.0667\nRMSE: 18.9475\nR2: 0.7778\nbaseline_MAE: 32.2104\nFirst five held-out predictions: [136.61176863 183.81958397 137.70547951 105.22060356  89.00438039]\nPrevious-day persistence MAE: 29.1514\n",
+    "metrics": {
+      "MAE": 15.066669505634266,
+      "RMSE": 18.94753053461671,
+      "R2": 0.7777753712359046,
+      "baseline_MAE": 32.21038995406228,
+      "persistence_MAE": 29.151429616874452
+    },
+    "conclusion": "Measured results: MAE = 15.0667; RMSE = 18.9475; R2 = 0.7778; baseline_MAE = 32.2104; persistence_MAE = 29.1514. This is rolling one-day-ahead forecasting with known advertising and price. Multi-day forecasting would need predicted lags and a separate evaluation.",
+    "image": "outputs/15_sales_prediction.png"
+  }
+]
