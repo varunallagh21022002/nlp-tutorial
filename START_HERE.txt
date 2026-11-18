@@ -1,0 +1,24 @@
+NLP TUTORIAL - SUBMISSION PACKAGE
+
+Submit: output/pdf/NLP_Tutorial_Practical_Record.pdf
+This is a 51-page record with all 15 practicals and separate output pages.
+
+Open in Google Colab:
+All_15_Practicals_Colab.ipynb
+Each individual notebook in notebooks/ is also standalone.
+The notebooks embed the three text datasets and generate other required data.
+
+All practicals have been executed locally with captured outputs.
+See outputs/environment.json for tested package versions.
+See README.md for data provenance, evaluation protocol and limitations.
+
+To rebuild locally:
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python build.py
+python make_report.py
+
+Verified Google Colab run:
+All_15_Practicals_Colab_Executed.ipynb
+https://colab.research.google.com/drive/1C1L7ZWiY5o6PdAdhhsLEtXzLOLQRF26Q
